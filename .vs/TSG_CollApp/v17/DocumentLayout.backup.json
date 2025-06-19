@@ -1,46 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\",
+  "WorkspaceRootPath": "C:\\Users\\vince\\Documents\\GitHub\\TSG_CollApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\ui\\alert-dialog.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\ui\\alert-dialog.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\ui\\accordion.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\ui\\accordion.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\actions\\auth.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\actions\\auth.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\layout\\footer.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\layout\\footer.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\layout\\header.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\layout\\header.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\globals.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\globals.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\ui\\card.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\ui\\card.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\page.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vince\\Documents\\GitHub\\TSG_CollApp\\src\\app\\page.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\page.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\layout.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vince\\Documents\\GitHub\\TSG_CollApp\\src\\app\\layout.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\app\\layout.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\package.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:package.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -59,132 +27,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "alert-dialog.tsx",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\ui\\alert-dialog.tsx",
-              "RelativeDocumentMoniker": "src\\components\\ui\\alert-dialog.tsx",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\ui\\alert-dialog.tsx",
-              "RelativeToolTip": "src\\components\\ui\\alert-dialog.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "page.tsx",
+              "DocumentMoniker": "C:\\Users\\vince\\Documents\\GitHub\\TSG_CollApp\\src\\app\\page.tsx",
+              "RelativeDocumentMoniker": "src\\app\\page.tsx",
+              "ToolTip": "C:\\Users\\vince\\Documents\\GitHub\\TSG_CollApp\\src\\app\\page.tsx",
+              "RelativeToolTip": "src\\app\\page.tsx",
+              "ViewState": "AgIAAHQAAAAAAAAAAAAAAIcAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-06-18T14:09:33.588Z",
+              "WhenOpened": "2025-06-18T14:59:47.007Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "accordion.tsx",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\ui\\accordion.tsx",
-              "RelativeDocumentMoniker": "src\\components\\ui\\accordion.tsx",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\ui\\accordion.tsx",
-              "RelativeToolTip": "src\\components\\ui\\accordion.tsx",
-              "ViewState": "AgIAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-06-18T14:09:27.816Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "header.tsx",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\layout\\header.tsx",
-              "RelativeDocumentMoniker": "src\\components\\layout\\header.tsx",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\layout\\header.tsx",
-              "RelativeToolTip": "src\\components\\layout\\header.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAnAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-06-18T14:06:57.985Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "footer.tsx",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\layout\\footer.tsx",
-              "RelativeDocumentMoniker": "src\\components\\layout\\footer.tsx",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\layout\\footer.tsx",
-              "RelativeToolTip": "src\\components\\layout\\footer.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-06-18T14:06:47.634Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "auth.ts",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\actions\\auth.ts",
-              "RelativeDocumentMoniker": "src\\app\\actions\\auth.ts",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\actions\\auth.ts",
-              "RelativeToolTip": "src\\app\\actions\\auth.ts",
-              "ViewState": "AgIAAIAAAAAAAAAAAAAgwJAAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-06-18T14:05:46.697Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "card.tsx",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\ui\\card.tsx",
-              "RelativeDocumentMoniker": "src\\components\\ui\\card.tsx",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\components\\ui\\card.tsx",
-              "RelativeToolTip": "src\\components\\ui\\card.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-06-18T14:05:20.839Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
               "Title": "layout.tsx",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\layout.tsx",
+              "DocumentMoniker": "C:\\Users\\vince\\Documents\\GitHub\\TSG_CollApp\\src\\app\\layout.tsx",
               "RelativeDocumentMoniker": "src\\app\\layout.tsx",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\layout.tsx",
+              "ToolTip": "C:\\Users\\vince\\Documents\\GitHub\\TSG_CollApp\\src\\app\\layout.tsx",
               "RelativeToolTip": "src\\app\\layout.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-06-18T13:59:26.855Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "page.tsx",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\page.tsx",
-              "RelativeDocumentMoniker": "src\\app\\page.tsx",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\page.tsx",
-              "RelativeToolTip": "src\\app\\page.tsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAJwAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2025-06-17T18:13:51.715Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "package.json",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\package.json",
-              "RelativeDocumentMoniker": "package.json",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\package.json",
-              "RelativeToolTip": "package.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-06-17T18:21:09.286Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "globals.css",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\globals.css",
-              "RelativeDocumentMoniker": "src\\app\\globals.css",
-              "ToolTip": "C:\\Users\\User\\Desktop\\jerby\\CPE340\\TSG_COLLAPP\\TSG_CollApp\\src\\app\\globals.css",
-              "RelativeToolTip": "src\\app\\globals.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-06-17T18:16:07.381Z",
-              "EditorCaption": ""
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-06-18T14:59:13.051Z"
             }
           ]
         }
