@@ -5,7 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: 'COLLAPP',
-  description: 'Making college applications easier for students and school representatives.',
+    description: 'Making college applications easier for students and school representatives.',
+    icons: {
+        icon:'/favicon.ico',
+    }
 };
 
 export default function RootLayout({
