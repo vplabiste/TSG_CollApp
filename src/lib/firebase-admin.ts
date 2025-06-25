@@ -2,9 +2,11 @@
 import admin from 'firebase-admin';
 import { getApps, initializeApp, type App } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
+import { getAuth, type Auth } from 'firebase-admin/auth';
 import { credential } from 'firebase-admin';
 
 let adminDb: Firestore;
+let adminAuth: Auth;
 
 try {
   const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -26,6 +28,7 @@ try {
       console.log('Firebase Admin SDK Initialized Successfully.');
     }
     adminDb = getFirestore();
+    adminAuth = getAuth();
   } else {
     console.warn(
       '********************************************************************************\n' +
@@ -34,10 +37,12 @@ try {
         '********************************************************************************'
     );
     adminDb = {} as Firestore;
+    adminAuth = {} as Auth;
   }
 } catch (error: any) {
   console.error('Firebase Admin Initialization failed:', error.message);
   adminDb = {} as Firestore;
+  adminAuth = {} as Auth;
 }
 
-export { adminDb };
+export { adminDb, adminAuth };

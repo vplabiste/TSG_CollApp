@@ -16,8 +16,8 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { loginSchema, type LoginFormInputs } from '@/lib/auth-schemas';
 import { useToast } from '@/hooks/use-toast';
-import { useTransition } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useTransition, useState } from 'react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -27,13 +27,13 @@ import { doc, getDoc, type DocumentSnapshot } from 'firebase/firestore';
 import type { User, UserRole } from '@/lib/auth-constants';
 
 const hardcodedUsers = [
-  { email: 'admin@collapp.app', password: 'AdminPass123!', role: 'admin' as UserRole },
   { email: 'schoolrep@collapp.app', password: 'RepPass123!', role: 'schoolrep' as UserRole },
 ];
 
 export function LoginForm() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const form = useForm<LoginFormInputs>({
@@ -51,7 +51,7 @@ export function LoginForm() {
         const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
         const firebaseUser = userCredential.user;
 
-        if (auth.currentUser && !auth.currentUser.emailVerified) {
+        if (auth.currentUser && !auth.currentUser.emailVerified && data.email !== 'admin@collapp.app') {
           toast({
             variant: 'destructive',
             title: 'Email Not Verified',
@@ -143,13 +143,23 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel className="text-card-foreground">Password</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      {...field} 
-                      className="bg-input text-foreground border-border placeholder:text-muted-foreground"
-                      disabled={isPending}
-                    />
+                    <div className="relative">
+                        <Input 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="bg-input text-foreground border-border placeholder:text-muted-foreground pr-10"
+                        disabled={isPending}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

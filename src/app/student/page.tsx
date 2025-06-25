@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,13 +10,20 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { getUserProfile } from '@/app/actions/student';
+import { getUserProfile, getStudentDashboardStats } from '@/app/actions/student';
 
 interface StatCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;
   colorClass?: string;
+}
+
+type DashboardStats = {
+    totalApplications: number;
+    accepted: number;
+    underReview: number;
+    availableColleges: number;
 }
 
 function StatCard({ title, value, icon, colorClass = 'bg-card' }: StatCardProps) {
@@ -75,6 +83,7 @@ function OnboardingPrompt() {
 
 export default function StudentDashboardPage() {
   const [user, setUser] = useState<User | null>(null);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,17 +93,20 @@ export default function StudentDashboardPage() {
       setError(null);
       if (firebaseUser) {
         try {
-          const profile = await getUserProfile(firebaseUser.uid);
+          const [profile, dashboardStats] = await Promise.all([
+              getUserProfile(firebaseUser.uid),
+              getStudentDashboardStats(firebaseUser.uid)
+          ]);
+          
           if (profile) {
             setUser(profile);
           } else {
-            // This can happen if the Firestore doc isn't created yet.
-            // For now, just show basic user info.
             setUser({ uid: firebaseUser.uid, email: firebaseUser.email, onboardingComplete: false } as User);
           }
+          setStats(dashboardStats);
         } catch (e: any) {
-            console.error("Failed to fetch user data:", e);
-            setError("Failed to load your profile. Please try refreshing the page.");
+            console.error("Failed to fetch dashboard data:", e);
+            setError("Failed to load your dashboard. Please try refreshing the page.");
         }
       } else {
         setError("No authenticated user found. Please login.");
@@ -106,7 +118,7 @@ export default function StudentDashboardPage() {
   }, []);
 
 
-  if (loading) {
+  if (loading || !stats) {
     return <DashboardSkeleton />;
   }
 
@@ -120,14 +132,6 @@ export default function StudentDashboardPage() {
     );
   }
 
-  // Mock data - this will be replaced with real data from Firestore later
-  const dashboardStats = {
-    totalApplications: 0,
-    accepted: 0,
-    underReview: 0,
-    availableColleges: 3,
-  };
-
   return (
     <div className="w-full">
         <div className="flex justify-between items-center mb-6">
@@ -139,24 +143,24 @@ export default function StudentDashboardPage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatCard 
                 title="Total Applications" 
-                value={dashboardStats.totalApplications} 
+                value={stats.totalApplications} 
                 icon={<FileText className="h-5 w-5 text-muted-foreground" />} 
             />
             <StatCard 
                 title="Accepted" 
-                value={dashboardStats.accepted} 
+                value={stats.accepted} 
                 icon={<CheckCircle className="h-5 w-5 text-success-foreground" />}
                 colorClass="bg-success text-success-foreground" 
             />
             <StatCard 
                 title="Under Review" 
-                value={dashboardStats.underReview} 
+                value={stats.underReview} 
                 icon={<Clock className="h-5 w-5 text-warning-foreground" />}
                 colorClass="bg-warning text-warning-foreground"
             />
             <StatCard 
                 title="Available Colleges" 
-                value={dashboardStats.availableColleges} 
+                value={stats.availableColleges} 
                 icon={<MapPin className="h-5 w-5 text-muted-foreground" />} 
             />
         </div>

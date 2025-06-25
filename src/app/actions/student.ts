@@ -4,11 +4,13 @@
 import { z } from 'zod';
 import { adminDb } from '@/lib/firebase-admin';
 import cloudinary from '@/lib/cloudinary';
-import { onboardingSchema, profilePictureSchema } from '@/lib/student-schemas';
+import { onboardingSchema, profilePictureSchema, applicationSchema, resubmissionSchema } from '@/lib/student-schemas';
 import { redirect } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { revalidatePath } from 'next/cache';
 import type { User } from '@/lib/auth-constants';
+import { getColleges } from './colleges';
+import type { Application } from '@/lib/college-schemas';
 
 export interface ActionResult {
   success: boolean;
@@ -17,7 +19,7 @@ export interface ActionResult {
   newImageUrl?: string;
 }
 
-const uploadFile = (file: File, userId: string, type: 'birth-cert' | 'school-id' | 'profile-picture'): Promise<string> => {
+const uploadFile = (file: File, userId: string, type: 'birth-cert' | 'school-id' | 'profile-picture' | 'application-doc'): Promise<string> => {
   if (!file) throw new Error(`No file provided for ${type}`);
   
   return new Promise(async (resolve, reject) => {
@@ -185,4 +187,212 @@ export async function getUserProfile(userId: string): Promise<User | null> {
     console.error("Failed to fetch user profile:", error);
     return null;
   }
+}
+
+
+export async function getStudentDashboardStats(userId: string) {
+    try {
+        const applicationsSnapshot = await adminDb.collection('applications').where('studentId', '==', userId).get();
+        const applications = applicationsSnapshot.docs.map(doc => doc.data() as Application);
+
+        const colleges = await getColleges();
+        
+        return {
+            totalApplications: applications.length,
+            accepted: applications.filter(app => app.status === 'Accepted').length,
+            underReview: applications.filter(app => app.status === 'Under Review').length,
+            availableColleges: colleges.length,
+        };
+    } catch (error) {
+        console.error("Error fetching student dashboard stats:", error);
+        return {
+            totalApplications: 0,
+            accepted: 0,
+            underReview: 0,
+            availableColleges: 0,
+        };
+    }
+}
+
+export async function getMyApplications(userId: string): Promise<Application[]> {
+    if (!userId) return [];
+    try {
+        const snapshot = await adminDb.collection('applications')
+            .where('studentId', '==', userId)
+            .get();
+        
+        if (snapshot.empty) return [];
+
+        const applications = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        } as Application));
+
+        applications.sort((a, b) => {
+            if (a.submittedAt && b.submittedAt) {
+                return new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime();
+            }
+            return 0;
+        });
+
+        return applications;
+    } catch (error) {
+        console.error(`Error fetching applications for user ${userId}:`, error);
+        return [];
+    }
+}
+
+
+export async function submitApplication(formData: FormData, userId: string, collegeId: string): Promise<ActionResult> {
+    if (!userId) {
+        return { success: false, message: 'You must be logged in.' };
+    }
+
+    const user = await getUserProfile(userId);
+    if (!user) {
+        return { success: false, message: 'User profile not found.' };
+    }
+
+    const rawData: { [k: string]: any } = {};
+    const requirementKeys: string[] = [];
+    formData.forEach((value, key) => {
+        if (key.startsWith('requirement-')) {
+            const reqId = key.replace('requirement-', '');
+            rawData[reqId] = value;
+            requirementKeys.push(reqId);
+        }
+    });
+
+    const validatedFields = applicationSchema.safeParse(rawData);
+
+    if (!validatedFields.success) {
+        return {
+            success: false,
+            message: 'Invalid form data. Please ensure all required files are uploaded.',
+            errors: validatedFields.error.issues,
+        };
+    }
+    
+    try {
+        const collegeRef = adminDb.collection('colleges').doc(collegeId);
+        const collegeDoc = await collegeRef.get();
+        if (!collegeDoc.exists) {
+            return { success: false, message: 'College not found.' };
+        }
+        const collegeData = collegeDoc.data();
+
+        const documentUploadPromises = requirementKeys.map(async (key) => {
+            const file = validatedFields.data[key];
+            const fileUrl = await uploadFile(file, userId, 'application-doc');
+            return {
+                id: key,
+                label: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+                fileUrl,
+                status: 'Pending' as const,
+            };
+        });
+
+        const uploadedDocuments = await Promise.all(documentUploadPromises);
+
+        const applicationData: Omit<Application, 'id'> = {
+            studentId: userId,
+            collegeId: collegeId,
+            collegeName: collegeData?.name || 'Unknown College',
+            studentInfo: {
+                name: `${user.firstName} ${user.lastName}`,
+                email: user.email || '',
+                profilePictureUrl: user.profilePictureUrl || ''
+            },
+            status: 'Under Review',
+            submittedAt: new Date().toISOString(),
+            documents: uploadedDocuments,
+        };
+
+        await adminDb.collection('applications').add(applicationData);
+
+        revalidatePath(`/student/colleges/${collegeId}`);
+        revalidatePath('/student/applications');
+        return { success: true, message: 'Application submitted successfully!' };
+
+    } catch (error: any) {
+        console.error('Error submitting application:', error);
+        return { success: false, message: `An unexpected error occurred: ${error.message}` };
+    }
+}
+
+export async function hasApplied(userId: string, collegeId: string): Promise<boolean> {
+    if (!userId) return false;
+    try {
+        const snapshot = await adminDb.collection('applications')
+            .where('studentId', '==', userId)
+            .where('collegeId', '==', collegeId)
+            .limit(1)
+            .get();
+        return !snapshot.empty;
+    } catch (error) {
+        console.error("Error checking application status:", error);
+        return false;
+    }
+}
+
+const getPublicIdFromUrl = (url: string | undefined): string | null => {
+  if (!url) return null;
+  const match = url.match(/\/v[0-9]+\/(.+?)(?:\.[a-zA-Z0-9]+)?$/);
+  return match ? match[1] : null;
+};
+
+export async function resubmitDocument(formData: FormData, applicationId: string, documentId: string): Promise<ActionResult> {
+    const validatedFields = resubmissionSchema.safeParse({
+        documentFile: formData.get('documentFile'),
+    });
+
+    if (!validatedFields.success) {
+        return {
+            success: false,
+            message: 'Invalid file provided.',
+            errors: validatedFields.error.issues,
+        };
+    }
+
+    const { documentFile } = validatedFields.data;
+
+    try {
+        const appDocRef = adminDb.collection('applications').doc(applicationId);
+        const appDoc = await appDocRef.get();
+        if (!appDoc.exists) {
+            return { success: false, message: 'Application not found.' };
+        }
+
+        const application = appDoc.data() as Application;
+        const documentIndex = application.documents.findIndex(doc => doc.id === documentId);
+        if (documentIndex === -1) {
+            return { success: false, message: 'Document not found in application.' };
+        }
+        
+        const oldDocument = application.documents[documentIndex];
+
+        // Delete old file from Cloudinary
+        const oldPublicId = getPublicIdFromUrl(oldDocument.fileUrl);
+        if (oldPublicId) {
+            await cloudinary.uploader.destroy(oldPublicId, { resource_type: 'auto' }).catch(e => console.warn(`Could not delete old Cloudinary file: ${e.message}`));
+        }
+        
+        // Upload new file
+        const newFileUrl = await uploadFile(documentFile, application.studentId, 'application-doc');
+
+        // Update application document in Firestore
+        const newDocuments = [...application.documents];
+        newDocuments[documentIndex].fileUrl = newFileUrl;
+        newDocuments[documentIndex].status = 'Pending';
+        delete newDocuments[documentIndex].resubmissionNote;
+
+        await appDocRef.update({ documents: newDocuments });
+
+        revalidatePath(`/student/applications`);
+        return { success: true, message: 'Document resubmitted successfully.' };
+
+    } catch (error: any) {
+        console.error('Error resubmitting document:', error);
+        return { success: false, message: `An unexpected error occurred: ${error.message}` };
+    }
 }

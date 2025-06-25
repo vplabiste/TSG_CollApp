@@ -1,3 +1,4 @@
+
 'use server';
 
 import { redirect } from 'next/navigation';
@@ -10,7 +11,7 @@ import {
   type UserCredential
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import type { User } from '@/lib/auth-constants';
+import type { User, UserRole } from '@/lib/auth-constants';
 import { signupSchema, type SignupFormInputs } from '@/lib/auth-schemas';
 
 export interface AuthResult {
@@ -42,10 +43,14 @@ export async function registerStudent(data: SignupFormInputs): Promise<AuthResul
         return { success: false, message: 'Failed to create user account details.' };
     }
 
+    const role: UserRole = validatedData.email === 'admin@collapp.app' ? 'admin' : 'student';
+
     const newUser: Partial<User> = { 
       firstName: firstName || '',
       lastName: lastName || '',
-      role: 'student',
+      role: role,
+      createdAt: new Date().toISOString(),
+      onboardingComplete: role === 'admin' // Admins don't need onboarding
     };
 
     try {

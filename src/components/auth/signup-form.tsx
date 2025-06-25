@@ -17,7 +17,7 @@ import { registerStudent } from '@/app/actions/auth';
 import { signupSchema, type SignupFormInputs } from '@/lib/auth-schemas';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useTransition } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 
@@ -25,6 +25,8 @@ export function SignupForm() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<SignupFormInputs>({
     resolver: zodResolver(signupSchema),
@@ -127,12 +129,22 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel className="text-card-foreground">Password</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      {...field} 
-                      className="bg-input text-foreground border-border placeholder:text-muted-foreground"
-                    />
+                    <div className="relative">
+                        <Input 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="bg-input text-foreground border-border placeholder:text-muted-foreground pr-10"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,12 +157,22 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel className="text-card-foreground">Confirm Password</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      {...field} 
-                      className="bg-input text-foreground border-border placeholder:text-muted-foreground"
-                    />
+                    <div className="relative">
+                        <Input 
+                        type={showConfirmPassword ? "text" : "password"} 
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="bg-input text-foreground border-border placeholder:text-muted-foreground pr-10"
+                        />
+                         <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+                            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                        >
+                            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

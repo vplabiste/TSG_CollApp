@@ -1,20 +1,15 @@
-
 'use client';
 
 import {
-  Bell,
   GraduationCap,
-  Home,
-  LineChart,
-  Package,
   PanelLeft,
-  Search,
   Settings,
   LogOut,
-  FileText,
+  Users,
+  Building2,
+  LayoutDashboard,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -32,35 +27,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
-import { getUserProfile } from '@/app/actions/student';
 
-export function StudentHeader() {
+export function AdminHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const [profilePictureUrl, setProfilePictureUrl] = useState<string | null>(null);
-
-   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
-      if (firebaseUser) {
-        const profile = await getUserProfile(firebaseUser.uid);
-        if (profile && profile.profilePictureUrl) {
-          setProfilePictureUrl(profile.profilePictureUrl);
-        } else {
-          setProfilePictureUrl(null);
-        }
-      } else {
-        setProfilePictureUrl(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [pathname]); // Re-run on path change to catch updates after settings page change
 
   const handleLogout = async () => {
     try {
@@ -68,24 +43,16 @@ export function StudentHeader() {
       router.push('/');
     } catch (error) {
       console.error('Logout failed:', error);
+       // Fallback for demo user if signOut fails
+      router.push('/');
     }
   };
 
   const getBreadcrumb = (path: string) => {
-    switch (path) {
-        case '/student':
-            return 'Dashboard';
-        case '/student/colleges':
-            return 'Colleges';
-        case '/student/applications':
-            return 'Applications';
-        case '/student/settings':
-            return 'Settings';
-        case '/student/onboarding':
-            return 'Onboarding';
-        default:
-            return 'Student';
-    }
+    const parts = path.split('/').filter(Boolean);
+    if (parts.length < 2) return 'Dashboard';
+    const page = parts[1];
+    return page.charAt(0).toUpperCase() + page.slice(1);
   }
 
   return (
@@ -100,39 +67,27 @@ export function StudentHeader() {
             <SheetContent side="left" className="sm:max-w-xs">
             <nav className="grid gap-6 text-lg font-medium">
                 <Link
-                href="/student"
+                href="/admin"
                 className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
                 >
                 <GraduationCap className="h-5 w-5 transition-all group-hover:scale-110" />
                 <span className="sr-only">COLLAPP</span>
                 </Link>
-                <Link
-                href="/student"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                <Home className="h-5 w-5" />
-                Dashboard
+                <Link href="/admin" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                    <LayoutDashboard className="h-5 w-5" />
+                    Dashboard
                 </Link>
-                <Link
-                href="/student/colleges"
-                className="flex items-center gap-4 px-2.5 text-foreground"
-                >
-                <Package className="h-5 w-5" />
-                Colleges
+                <Link href="/admin/users" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                    <Users className="h-5 w-5" />
+                    Users
                 </Link>
-                <Link
-                href="/student/applications"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                <FileText className="h-5 w-5" />
-                Applications
+                <Link href="/admin/colleges" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                    <Building2 className="h-5 w-5" />
+                    Colleges
                 </Link>
-                 <Link
-                href="/student/settings"
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-                >
-                <Settings className="h-5 w-5" />
-                Settings
+                 <Link href="/admin/settings" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                    <Settings className="h-5 w-5" />
+                    Settings
                 </Link>
             </nav>
             </SheetContent>
@@ -141,7 +96,7 @@ export function StudentHeader() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/student">Student</Link>
+              <Link href="/admin">Admin</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
@@ -161,21 +116,20 @@ export function StudentHeader() {
             className="overflow-hidden rounded-full"
           >
             <Image
-              src={profilePictureUrl || "https://placehold.co/36x36.png"}
+              src={"https://placehold.co/36x36.png"}
               width={36}
               height={36}
-              alt="Avatar"
+              alt="Admin Avatar"
               className="overflow-hidden rounded-full aspect-square object-cover"
               data-ai-hint="profile avatar"
-              key={profilePictureUrl}
             />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>Admin Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href="/student/settings" className="flex items-center gap-2 cursor-pointer">
+            <Link href="/admin/settings" className="flex items-center gap-2 cursor-pointer">
               <Settings className="h-4 w-4"/> Settings
             </Link>
           </DropdownMenuItem>

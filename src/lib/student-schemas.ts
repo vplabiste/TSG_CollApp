@@ -1,27 +1,31 @@
+
 import { z } from 'zod';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const ACCEPTED_DOC_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
 
-const fileSchema = (acceptedTypes: string[]) => z
+const fileSchema = (acceptedTypes: string[], required = true) => z
   .any()
-  .refine((value) => value, 'File is required.')
+  .refine((value) => required ? value : true, 'File is required.')
   .transform((value, ctx) => {
     const file = value instanceof (global.File || Blob) ? value : value?.[0];
 
     if (!file || file.size === 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'File is required.',
-      });
-      return z.NEVER;
+      if (required) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'File is required.',
+          });
+          return z.NEVER;
+      }
+      return undefined;
     }
     return file;
   })
-  .refine((file) => file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+  .refine((file) => !file || file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
   .refine(
-    (file) => acceptedTypes.includes(file.type),
+    (file) => !file || acceptedTypes.includes(file.type),
     `Accepted file types: ${acceptedTypes.map(t => t.split('/')[1]).join(', ')}.`
   );
 
@@ -85,3 +89,11 @@ export const profilePictureSchema = z.object({
 });
 
 export type ProfilePictureInputs = z.infer<typeof profilePictureSchema>;
+
+export const applicationSchema = z.record(z.string(), fileSchema(ACCEPTED_DOC_TYPES));
+export type ApplicationInputs = z.infer<typeof applicationSchema>;
+
+export const resubmissionSchema = z.object({
+  documentFile: fileSchema(ACCEPTED_DOC_TYPES),
+});
+export type ResubmissionInputs = z.infer<typeof resubmissionSchema>;

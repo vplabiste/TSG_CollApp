@@ -35,4 +35,5 @@ export interface User {
   };
   birthCertificateUrl?: string;
   schoolIdUrl?: string;
+  createdAt?: string;
 }
