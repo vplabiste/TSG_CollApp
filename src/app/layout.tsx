@@ -2,10 +2,14 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { DevStatusBar } from '@/components/dev/status-bar';
 
 export const metadata: Metadata = {
   title: 'COLLAPP',
   description: 'Making college applications easier for students and school representatives.',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
@@ -24,6 +28,7 @@ export default function RootLayout({
       <body className="font-body antialiased bg-background text-foreground">
         {children}
         <Toaster />
+        <DevStatusBar />
       </body>
     </html>
   );

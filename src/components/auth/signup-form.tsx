@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { registerStudent } from '@/app/actions/auth';
 import { signupSchema, type SignupFormInputs } from '@/lib/auth-schemas';
 import { useToast } from '@/hooks/use-toast';
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
@@ -24,6 +24,7 @@ import Link from 'next/link';
 export function SignupForm() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const form = useForm<SignupFormInputs>({
     resolver: zodResolver(signupSchema),
@@ -38,20 +39,42 @@ export function SignupForm() {
   const onSubmit = async (data: SignupFormInputs) => {
     startTransition(async () => {
       const result = await registerStudent(data);
-      if (!result.success && result.message) {
+      if (result.success) {
+        setIsSuccess(true);
+        toast({
+           title: 'Account Created!',
+           description: result.message, 
+           duration: 5000,
+         });
+      } else {
         toast({
           variant: 'destructive',
           title: 'Sign Up Failed',
           description: result.message,
         });
-      } else if (result.success && result.message) { 
-         toast({
-           title: 'Success!',
-           description: result.message, 
-         });
       }
     });
   };
+
+  if (isSuccess) {
+    return (
+       <Card className="w-full max-w-md shadow-xl bg-card border-border">
+        <CardHeader className="items-center text-center">
+          <CardTitle className="font-headline text-2xl tracking-tight text-card-foreground">Registration Successful!</CardTitle>
+          <CardDescription className="text-card-foreground/80 pt-2">
+            We've sent a verification link to your email address. Please check your inbox and follow the link to activate your account before logging in.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link href="/" className="w-full inline-block">
+            <Button className="w-full">
+              Back to Homepage
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card className="w-full max-w-md shadow-xl bg-card border-border">

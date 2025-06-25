@@ -1,24 +1,176 @@
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { auth } from '@/lib/firebase';
+import type { User } from '@/lib/auth-constants';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { CheckCircle, Clock, FileText, MapPin, AlertTriangle, UserPlus } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { getUserProfile } from '@/app/actions/student';
+
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+  colorClass?: string;
+}
+
+function StatCard({ title, value, icon, colorClass = 'bg-card' }: StatCardProps) {
+    return (
+        <Card className={`shadow-md ${colorClass}`}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{title}</CardTitle>
+                {icon}
+            </CardHeader>
+            <CardContent>
+                <div className="text-4xl font-bold">{value}</div>
+            </CardContent>
+        </Card>
+    );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="w-full">
+      <Skeleton className="h-10 w-1/3 mb-6" />
+       <div className="mt-8 mb-6">
+        <Skeleton className="h-40" />
+      </div>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Skeleton className="h-28" />
+        <Skeleton className="h-28" />
+        <Skeleton className="h-28" />
+        <Skeleton className="h-28" />
+      </div>
+      <div className="mt-8">
+        <Skeleton className="h-40" />
+      </div>
+    </div>
+  )
+}
+
+function OnboardingPrompt() {
+    return (
+        <Card className="mb-6 bg-primary/5 border-primary/20 shadow-lg">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-primary">
+                    <UserPlus className="h-8 w-8" />
+                    Complete Your Profile
+                </CardTitle>
+                <CardDescription className="text-foreground/80 !mt-2">
+                    Welcome to COLLAPP! To unlock all features and start applying to colleges, please complete your student profile.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Link href="/student/onboarding">
+                    <Button>Start Onboarding</Button>
+                </Link>
+            </CardContent>
+        </Card>
+    )
+}
 
 export default function StudentDashboardPage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+      setLoading(true);
+      setError(null);
+      if (firebaseUser) {
+        try {
+          const profile = await getUserProfile(firebaseUser.uid);
+          if (profile) {
+            setUser(profile);
+          } else {
+            // This can happen if the Firestore doc isn't created yet.
+            // For now, just show basic user info.
+            setUser({ uid: firebaseUser.uid, email: firebaseUser.email, onboardingComplete: false } as User);
+          }
+        } catch (e: any) {
+            console.error("Failed to fetch user data:", e);
+            setError("Failed to load your profile. Please try refreshing the page.");
+        }
+      } else {
+        setError("No authenticated user found. Please login.");
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
+
+  if (error || !user) {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle className="h-5 w-5" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error || 'Could not load user data. Please try logging out and back in.'}</AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Mock data - this will be replaced with real data from Firestore later
+  const dashboardStats = {
+    totalApplications: 0,
+    accepted: 0,
+    underReview: 0,
+    availableColleges: 3,
+  };
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/40 p-4 text-foreground">
-      <Card className="w-full max-w-md shadow-lg bg-card border-border">
-        <CardHeader className="items-center">
-          <User className="h-12 w-12 text-primary mb-4" />
-          <CardTitle className="font-headline text-2xl text-center text-card-foreground">Student Dashboard (COLLAPP)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-center text-muted-foreground">
-            Welcome to COLLAPP! Track your applications, explore schools, and manage your profile.
-          </p>
-        </CardContent>
-      </Card>
-      <a href="/" className="mt-8 text-sm text-primary hover:underline">
-        &larr; Back to Homepage
-      </a>
+    <div className="w-full">
+        <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold tracking-tight text-primary">Welcome, {user.firstName || 'Student'}!</h1>
+        </div>
+        
+        {!user.onboardingComplete && <OnboardingPrompt />}
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <StatCard 
+                title="Total Applications" 
+                value={dashboardStats.totalApplications} 
+                icon={<FileText className="h-5 w-5 text-muted-foreground" />} 
+            />
+            <StatCard 
+                title="Accepted" 
+                value={dashboardStats.accepted} 
+                icon={<CheckCircle className="h-5 w-5 text-success-foreground" />}
+                colorClass="bg-success text-success-foreground" 
+            />
+            <StatCard 
+                title="Under Review" 
+                value={dashboardStats.underReview} 
+                icon={<Clock className="h-5 w-5 text-warning-foreground" />}
+                colorClass="bg-warning text-warning-foreground"
+            />
+            <StatCard 
+                title="Available Colleges" 
+                value={dashboardStats.availableColleges} 
+                icon={<MapPin className="h-5 w-5 text-muted-foreground" />} 
+            />
+        </div>
+
+        <div className="mt-8">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Recent Activity</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-center py-8 text-muted-foreground">Your recent application activities will be shown here.</p>
+                </CardContent>
+            </Card>
+        </div>
     </div>
   );
 }
