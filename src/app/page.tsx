@@ -10,7 +10,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
 import { LoginForm } from '@/components/auth/login-form';
+<<<<<<< Updated upstream
 import { useRouter } from 'next/navigation';
+=======
+import { getColleges } from './actions/colleges';
+import { getPlatformSettings } from './actions/settings';
+import { HomeRedirect } from '@/components/auth/home-redirect';
+>>>>>>> Stashed changes
 
 const universityData = [
   {
@@ -50,7 +56,12 @@ export default function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
+<<<<<<< Updated upstream
       <Header onLoginClick={handleLoginClick} />
+=======
+      <HomeRedirect />
+      <Header />
+>>>>>>> Stashed changes
       <main className="flex-grow">
         <section className="relative py-20 md:py-32 text-center bg-background">
                   <div className="absolute inset-0 opacity-4" style={{ backgroundImage: "url('/images/cambridge.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
@@ -132,6 +143,7 @@ export default function HomePage() {
                 </ul>
               </div>
               <div className="mt-10 lg:mt-0">
+<<<<<<< Updated upstream
                 <Image 
                   src="/images/univ.jpg" 
                   alt="Students collaborating" 
@@ -139,6 +151,15 @@ export default function HomePage() {
                   height={450} 
                   className="rounded-xl shadow-xl"
                   data-ai-hint="students collaboration"
+=======
+                <Image
+                  src="https://www.princetoncollegeconsulting.net/hubfs/pic-00.jpg"
+                  alt="Students collaborating"
+                  width={600}
+                  height={450}
+                  className="rounded-xl shadow-xl object-cover"
+                  data-ai-hint="students collaborating"
+>>>>>>> Stashed changes
                 />
               </div>
             </div>
