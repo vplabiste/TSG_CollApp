@@ -16,14 +16,17 @@ import { Input } from '@/components/ui/input';
 import { registerStudent } from '@/app/actions/auth';
 import { signupSchema, type SignupFormInputs } from '@/lib/auth-schemas';
 import { useToast } from '@/hooks/use-toast';
-import { useTransition } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 
 export function SignupForm() {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<SignupFormInputs>({
     resolver: zodResolver(signupSchema),
@@ -38,20 +41,42 @@ export function SignupForm() {
   const onSubmit = async (data: SignupFormInputs) => {
     startTransition(async () => {
       const result = await registerStudent(data);
-      if (!result.success && result.message) {
+      if (result.success) {
+        setIsSuccess(true);
+        toast({
+           title: 'Account Created!',
+           description: result.message, 
+           duration: 5000,
+         });
+      } else {
         toast({
           variant: 'destructive',
           title: 'Sign Up Failed',
           description: result.message,
         });
-      } else if (result.success && result.message) { 
-         toast({
-           title: 'Success!',
-           description: result.message, 
-         });
       }
     });
   };
+
+  if (isSuccess) {
+    return (
+       <Card className="w-full max-w-md shadow-xl bg-card border-border">
+        <CardHeader className="items-center text-center">
+          <CardTitle className="font-headline text-2xl tracking-tight text-card-foreground">Registration Successful!</CardTitle>
+          <CardDescription className="text-card-foreground/80 pt-2">
+            We've sent a verification link to your email address. Please check your inbox and follow the link to activate your account before logging in.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link href="/" className="w-full inline-block">
+            <Button className="w-full">
+              Back to Homepage
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card className="w-full max-w-md shadow-xl bg-card border-border">
@@ -104,12 +129,22 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel className="text-card-foreground">Password</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      {...field} 
-                      className="bg-input text-foreground border-border placeholder:text-muted-foreground"
-                    />
+                    <div className="relative">
+                        <Input 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="bg-input text-foreground border-border placeholder:text-muted-foreground pr-10"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -122,12 +157,22 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel className="text-card-foreground">Confirm Password</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      {...field} 
-                      className="bg-input text-foreground border-border placeholder:text-muted-foreground"
-                    />
+                    <div className="relative">
+                        <Input 
+                        type={showConfirmPassword ? "text" : "password"} 
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="bg-input text-foreground border-border placeholder:text-muted-foreground pr-10"
+                        />
+                         <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+                            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                        >
+                            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

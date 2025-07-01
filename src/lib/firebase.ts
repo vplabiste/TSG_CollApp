@@ -2,6 +2,7 @@
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,35 +13,43 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-if (!firebaseConfig.apiKey) {
-  console.error(
-    "[Firebase Setup Check] ERROR: NEXT_PUBLIC_FIREBASE_API_KEY is missing or empty. " +
-    "Please verify this variable is correctly set in your .env.local file using the SDK config you have. " +
-    "The app will likely fail to connect to Firebase. " +
-    "Remember to restart your development server after creating or modifying .env.local."
-  );
-} else {
-  console.log(
-    "[Firebase Setup Check] NEXT_PUBLIC_FIREBASE_API_KEY is present. Project ID:", firebaseConfig.projectId
-  );
-}
-
 let app: FirebaseApp;
+let auth: Auth;
+let db: Firestore;
+let storage: FirebaseStorage;
 
-if (!getApps().length) {
-  try {
-    app = initializeApp(firebaseConfig);
-  } catch (error) {
-    console.error("Firebase initializeApp failed:", error);
-    if (!app!) { 
-        console.error("Critical Firebase initialization error. App could not be initialized.");
+// Check if all required keys are present and not placeholders
+const isFirebaseConfigured =
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.projectId &&
+  !firebaseConfig.apiKey.includes('your_') &&
+  !firebaseConfig.projectId.includes('your_');
+
+
+if (isFirebaseConfigured) {
+    if (!getApps().length) {
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApps()[0];
     }
-  }
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
 } else {
-  app = getApps()[0];
+    console.error(
+        '********************************************************************************\n' +
+        '[Firebase Setup Check] FIREBASE IS NOT CONFIGURED.\n' +
+        'The application will run, but authentication and database features will likely fail.\n' +
+        'Please add your Firebase project credentials to your .env.local file and restart the server.\n' +
+        '********************************************************************************'
+    );
+    // Provide dummy/mock objects to prevent app crash on startup if not configured.
+    app = {} as FirebaseApp;
+    auth = {} as Auth;
+    db = {} as Firestore;
+    storage = {} as FirebaseStorage;
 }
 
-const auth: Auth = getAuth(app!);
-const db: Firestore = getFirestore(app!);
 
-export { app, auth, db };
+export { app, auth, db, storage };
