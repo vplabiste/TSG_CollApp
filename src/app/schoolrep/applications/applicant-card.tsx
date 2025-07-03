@@ -256,7 +256,7 @@ function DocumentReviewCard({ doc, onStatusChange, onNoteChange, isDecided }: {
                         <SelectItem value="Pending">Pending</SelectItem>
                         <SelectItem value="Accepted">Accepted</SelectItem>
                         <SelectItem value="Rejected">Rejected</SelectItem>
-                        <SelectItem value="Needs Resubmission">Needs Resubmission</SelectItem>
+                        <SelectItem value="Resubmit">Needs Resubmission</SelectItem>
                     </SelectContent>
                 </Select>
                 {doc.status === 'Resubmit' && (
