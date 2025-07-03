@@ -6,7 +6,7 @@ import { adminDb } from '@/lib/firebase-admin';
 import cloudinary from '@/lib/cloudinary';
 import type { ActionResult } from '@/app/actions/student';
 import { schoolRepOnboardingSchema } from '@/lib/college-schemas';
-import type { College, Application, DocumentStatus, ApplicationStatus } from '@/lib/college-schemas';
+import type { College, Application, DocumentStatus, ApplicationStatus, SubmittedDocument } from '@/lib/college-schemas';
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 import { redirect } from 'next/navigation';
@@ -228,7 +228,8 @@ export async function updateOverallApplicationStatus(
     applicationId: string,
     status: ApplicationStatus,
     message: string,
-    finalProgram?: string
+    finalProgram?: string,
+    documents?: SubmittedDocument[]
 ): Promise<ActionResult> {
      try {
         const appDocRef = adminDb.collection('applications').doc(applicationId);
@@ -242,6 +243,10 @@ export async function updateOverallApplicationStatus(
             finalMessage: message,
             decisionDate: new Date().toISOString()
         };
+        
+        if (documents) {
+            updateData.documents = documents;
+        }
 
         if (status === 'Accepted' && finalProgram) {
             updateData.finalProgram = finalProgram;

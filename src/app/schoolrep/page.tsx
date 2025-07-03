@@ -5,11 +5,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, Briefcase, Building2, Loader2, Users } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { AlertTriangle, Briefcase, Building2, Users, ArrowUpRight } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getCollegeByRepId, getApplicationsByCollege } from '@/app/actions/schoolrep';
 import type { College, Application } from '@/lib/college-schemas';
+import { format } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
 
 function DashboardSkeleton() {
   return (
@@ -78,6 +83,13 @@ export default function SchoolRepDashboardPage() {
     );
   }
 
+  const recentApplicants = applications.slice(0, 5);
+  const statusBadgeVariant = {
+    'Under Review': 'secondary',
+    'Accepted': 'default',
+    'Rejected': 'destructive',
+  } as const;
+
   return (
     <div className="w-full space-y-6">
       <div className="flex justify-between items-start">
@@ -127,14 +139,52 @@ export default function SchoolRepDashboardPage() {
       </div>
 
        <Card>
-        <CardHeader>
-          <CardTitle>Recent Applicants</CardTitle>
-          <CardDescription>
-            The latest students who have applied to your college.
-          </CardDescription>
+        <CardHeader className="flex flex-row items-center">
+          <div className="grid gap-2">
+            <CardTitle>Recent Applicants</CardTitle>
+            <CardDescription>
+              The latest students who have applied to your college.
+            </CardDescription>
+          </div>
+           <Button asChild size="sm" className="ml-auto gap-1">
+              <Link href="/schoolrep/applications">
+              View All
+              <ArrowUpRight className="h-4 w-4" />
+              </Link>
+          </Button>
         </CardHeader>
         <CardContent>
-           <p className="text-center py-16 text-muted-foreground">Applicant data can be viewed on the 'Applications' page.</p>
+           {recentApplicants.length > 0 ? (
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Student</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="text-right">Applied On</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {recentApplicants.map(app => (
+                            <TableRow key={app.id}>
+                                <TableCell>
+                                    <div className="font-medium">{app.studentInfo.name}</div>
+                                    <div className="text-sm text-muted-foreground">{app.studentInfo.email}</div>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge variant={statusBadgeVariant[app.status]}>
+                                        {app.status}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                    {format(new Date(app.submittedAt), 'PPP')}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+           ) : (
+                <p className="text-center py-16 text-muted-foreground">No recent applicants found.</p>
+           )}
         </CardContent>
       </Card>
 

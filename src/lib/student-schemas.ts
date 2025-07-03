@@ -3,9 +3,9 @@ import { z } from 'zod';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-const ACCEPTED_DOC_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+export const ACCEPTED_DOC_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
 
-const fileSchema = (acceptedTypes: string[], required = true) => z
+export const fileSchema = (acceptedTypes: string[], required = true) => z
   .any()
   .refine((value) => required ? value : true, 'File is required.')
   .transform((value, ctx) => {
@@ -94,13 +94,12 @@ export type ProfilePictureInputs = z.infer<typeof profilePictureSchema>;
 export const applicationFilesSchema = z.record(z.string(), fileSchema(ACCEPTED_DOC_TYPES));
 export type ApplicationFilesInputs = z.infer<typeof applicationFilesSchema>;
 
-// This schema is for the complete form, including program choices.
-// Using .passthrough() allows the dynamic file fields to be included without breaking validation.
-export const applicationSchema = z.object({
+// This schema is for the program choice part of the form.
+// The full schema is constructed dynamically in the form component.
+export const applicationProgramsSchema = z.object({
     firstChoiceProgram: z.string({ required_error: 'First choice program is required.'}).min(1, 'First choice program is required.'),
     secondChoiceProgram: z.string().optional(),
-}).passthrough();
-export type ApplicationInputs = z.infer<typeof applicationSchema>;
+});
 
 
 export const resubmissionSchema = z.object({

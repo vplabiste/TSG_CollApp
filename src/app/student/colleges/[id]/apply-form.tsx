@@ -1,13 +1,14 @@
 
 'use client';
 
-import { useTransition } from 'react';
+import { useMemo, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { applicationSchema, type ApplicationInputs } from '@/lib/student-schemas';
+import { applicationProgramsSchema, fileSchema, ACCEPTED_DOC_TYPES } from '@/lib/student-schemas';
 import { submitApplication } from '@/app/actions/student';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
@@ -22,19 +23,39 @@ interface ApplyFormProps {
     onSuccess: () => void;
 }
 
+// Dynamically generate the full schema
+const generateSchema = (requirements: { id: string; label: string }[]) => {
+    const requirementSchemas = Object.fromEntries(
+        requirements.map(req => [
+            req.id,
+            fileSchema(ACCEPTED_DOC_TYPES, true)
+        ])
+    );
+    return applicationProgramsSchema.extend(requirementSchemas);
+};
+
 export function ApplyForm({ collegeId, userId, requirements, programs, onSuccess }: ApplyFormProps) {
     const [isPending, startTransition] = useTransition();
     const { toast } = useToast();
 
+    // Memoize the dynamically generated schema to avoid re-creating it on every render
+    const applicationSchema = useMemo(() => generateSchema(requirements), [requirements]);
+
+    // Infer the form's input type from the dynamic schema
+    type ApplicationInputs = z.infer<typeof applicationSchema>;
+
     const form = useForm<ApplicationInputs>({
         resolver: zodResolver(applicationSchema),
+        mode: 'onChange', // This ensures the form is validated on every change
         defaultValues: {
             firstChoiceProgram: '',
             secondChoiceProgram: '',
+            ...Object.fromEntries(requirements.map(req => [req.id, undefined]))
         },
     });
 
     const firstChoice = form.watch('firstChoiceProgram');
+    const { isValid } = form.formState; // Get the validity state from the form
 
     const onSubmit = (data: ApplicationInputs) => {
         const formData = new FormData();
@@ -111,7 +132,7 @@ export function ApplyForm({ collegeId, userId, requirements, programs, onSuccess
                             <FormField
                                 key={req.id}
                                 control={form.control}
-                                name={req.id}
+                                name={req.id as keyof ApplicationInputs}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>{req.label}</FormLabel>
@@ -132,7 +153,7 @@ export function ApplyForm({ collegeId, userId, requirements, programs, onSuccess
                 </div>
 
                  <div className="flex justify-end pt-4">
-                    <Button type="submit" disabled={isPending}>
+                    <Button type="submit" disabled={isPending || !isValid}>
                         {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Submit Application
                     </Button>
