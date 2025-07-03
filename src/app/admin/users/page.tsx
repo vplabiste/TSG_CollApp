@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useTransition } from 'react';
 import Image from 'next/image';
 import {
   Card,
@@ -18,20 +19,33 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
+    DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Search, Users as UsersIcon, CheckCircle, XCircle } from 'lucide-react';
+import { MoreHorizontal, Search, Users as UsersIcon, CheckCircle, XCircle, Trash2, Edit, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getAllUsers } from '@/app/actions/admin';
+import { getAllUsers, deleteUser } from '@/app/actions/admin';
 import type { User, UserRole } from '@/lib/auth-constants';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
+import { EditUserDialog } from '@/components/admin/edit-user-dialog';
 
 function TableSkeleton() {
     return (
@@ -79,6 +93,15 @@ export default function AdminUsersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<UserRole | 'all'>('all');
+  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast();
+
+  const [dialogState, setDialogState] = useState<{
+    editOpen: boolean;
+    deleteOpen: boolean;
+    selectedUser: User | null;
+  }>({ editOpen: false, deleteOpen: false, selectedUser: null });
+  
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -104,6 +127,26 @@ export default function AdminUsersPage() {
     });
   }, [allUsers, searchTerm, roleFilter]);
 
+  const handleDelete = () => {
+    if (!dialogState.selectedUser) return;
+
+    startTransition(async () => {
+        const result = await deleteUser(dialogState.selectedUser!.uid);
+        if (result.success) {
+            toast({ title: 'Success', description: result.message });
+            setAllUsers(prev => prev.filter(u => u.uid !== dialogState.selectedUser!.uid));
+        } else {
+            toast({ variant: 'destructive', title: 'Error', description: result.message });
+        }
+        setDialogState({ editOpen: false, deleteOpen: false, selectedUser: null });
+    });
+  }
+
+  const handleUpdateSuccess = (updatedUser: User) => {
+    fetchUsers(); // Re-fetch all users to ensure data is fresh
+    setDialogState({ editOpen: false, deleteOpen: false, selectedUser: null });
+  }
+
   if (isLoading) {
       return (
           <Card>
@@ -114,6 +157,7 @@ export default function AdminUsersPage() {
   }
 
   return (
+    <>
     <Card>
       <CardHeader>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -197,11 +241,15 @@ export default function AdminUsersPage() {
                       <DropdownMenu>
                           <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button></DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                              <DropdownMenuItem disabled>
-                                  Edit User (coming soon)
+                              <DropdownMenuItem onSelect={() => setDialogState({ editOpen: true, deleteOpen: false, selectedUser: user })}>
+                                  <Edit className="mr-2 h-4 w-4"/> Edit User
                               </DropdownMenuItem>
-                              <DropdownMenuItem disabled className="text-destructive focus:text-destructive">
-                                  Delete User (coming soon)
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem 
+                                onSelect={() => setDialogState({ editOpen: false, deleteOpen: true, selectedUser: user })} 
+                                className="text-destructive focus:text-destructive"
+                              >
+                                  <Trash2 className="mr-2 h-4 w-4" /> Delete User
                               </DropdownMenuItem>
                           </DropdownMenuContent>
                       </DropdownMenu>
@@ -219,5 +267,33 @@ export default function AdminUsersPage() {
         </Table>
       </CardContent>
     </Card>
+
+    {dialogState.selectedUser && (
+        <>
+            <EditUserDialog
+                isOpen={dialogState.editOpen}
+                setIsOpen={(open) => setDialogState(prev => ({...prev, editOpen: open }))}
+                user={dialogState.selectedUser}
+                onSuccess={handleUpdateSuccess}
+            />
+            <AlertDialog open={dialogState.deleteOpen} onOpenChange={(open) => setDialogState(prev => ({...prev, deleteOpen: open}))}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle>Delete User: {dialogState.selectedUser.email}?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This will permanently delete the user account and their associated data from Firebase Authentication and Firestore. This action cannot be undone.
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete} disabled={isPending} className="bg-destructive hover:bg-destructive/90">
+                        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Delete User
+                    </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
+    )}
+    </>
   );
 }

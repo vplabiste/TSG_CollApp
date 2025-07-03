@@ -118,33 +118,39 @@ export default function ApplicationsPage() {
                                         <div>
                                             <h4 className="font-semibold mb-3">Submitted Documents</h4>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                {app.documents.map(doc => (
-                                                    <div key={doc.id} className={`p-3 border rounded-lg ${statusColors[doc.status]}`}>
-                                                        <div className="flex items-center justify-between">
-                                                            <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="font-medium hover:underline text-sm">{doc.label}</a>
-                                                            <div className="flex items-center gap-2">
-                                                                {statusIcons[doc.status]}
-                                                                <span className="text-sm">{doc.status}</span>
-                                                            </div>
-                                                        </div>
-                                                        {doc.status === 'Resubmit' && (
-                                                            <div className="mt-2 space-y-2">
-                                                                {doc.resubmissionNote && (
-                                                                    <div className="p-2 bg-background/50 rounded-md text-xs">
-                                                                        <p className="flex items-center gap-1.5"><MessageSquare className="h-3 w-3" /> <strong>Note:</strong> {doc.resubmissionNote}</p>
-                                                                    </div>
-                                                                )}
-                                                                <div className="text-right">
-                                                                    <ResubmitDocumentDialog
-                                                                        applicationId={app.id}
-                                                                        document={doc}
-                                                                        onSuccess={fetchApplications}
-                                                                    />
+                                                {app.documents.map(doc => {
+                                                    // FIX: Handle both 'Resubmit' and legacy 'Needs Resubmission' statuses
+                                                    const isResubmit = doc.status === 'Resubmit' || (doc.status as string) === 'Needs Resubmission';
+                                                    const currentStatus = isResubmit ? 'Resubmit' : doc.status;
+
+                                                    return (
+                                                        <div key={doc.id} className={`p-3 border rounded-lg ${statusColors[currentStatus]}`}>
+                                                            <div className="flex items-center justify-between">
+                                                                <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="font-medium hover:underline text-sm">{doc.label}</a>
+                                                                <div className="flex items-center gap-2">
+                                                                    {statusIcons[currentStatus]}
+                                                                    <span className="text-sm">{currentStatus}</span>
                                                                 </div>
                                                             </div>
-                                                        )}
-                                                    </div>
-                                                ))}
+                                                            {isResubmit && (
+                                                                <div className="mt-2 space-y-2">
+                                                                    {doc.resubmissionNote && (
+                                                                        <div className="p-2 bg-background/50 rounded-md text-xs">
+                                                                            <p className="flex items-center gap-1.5"><MessageSquare className="h-3 w-3" /> <strong>Note:</strong> {doc.resubmissionNote}</p>
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="text-right">
+                                                                        <ResubmitDocumentDialog
+                                                                            applicationId={app.id}
+                                                                            document={doc}
+                                                                            onSuccess={fetchApplications}
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )
+                                                })}
                                             </div>
                                         </div>
                                     </AccordionContent>
@@ -157,3 +163,4 @@ export default function ApplicationsPage() {
         </div>
     );
 }
+
