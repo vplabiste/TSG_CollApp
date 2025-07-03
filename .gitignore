@@ -61,3 +61,4 @@ database-debug.log
 firestore-debug.log
 ui-debug.log
 *~
+src/app/favicon.ico
